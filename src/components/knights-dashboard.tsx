@@ -22,7 +22,7 @@ export function KnightsDashboard() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <div className="lg:col-span-1 bg-slate-800 rounded-lg p-4 h-fit">
+      <div className="lg:col-span-1 bg-card rounded-lg p-4 h-fit">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Knights</h2>
           <Button 
@@ -44,7 +44,7 @@ export function KnightsDashboard() {
       
       <div className="lg:col-span-3">
         {isAddingKnight ? (
-          <div className="bg-slate-800 rounded-lg p-6">
+          <div className="bg-card rounded-lg p-6">
             <h2 className="text-xl font-bold mb-4">Add New Knight</h2>
             <KnightForm 
               onCancel={() => setIsAddingKnight(false)}
@@ -65,29 +65,29 @@ export function KnightsDashboard() {
             </TabsList>
             
             <TabsContent value="overview" className="mt-0">
-              <div className="bg-slate-800 rounded-lg p-6">
+              <div className="bg-card rounded-lg p-6">
                 <h2 className="text-2xl font-bold mb-6">{selectedKnight.nome}</h2>
                 <KnightDetails knight={selectedKnight} />
               </div>
             </TabsContent>
             
             <TabsContent value="details" className="mt-0">
-              <div className="bg-slate-800 rounded-lg p-6">
+              <div className="bg-card rounded-lg p-6">
                 <h2 className="text-2xl font-bold mb-6">{selectedKnight.nome} - Evolution</h2>
                 <KnightCharts knight={selectedKnight} />
               </div>
             </TabsContent>
             
             <TabsContent value="projections" className="mt-0">
-              <div className="bg-slate-800 rounded-lg p-6">
+              <div className="bg-card rounded-lg p-6">
                 <h2 className="text-2xl font-bold mb-6">{selectedKnight.nome} - Projections</h2>
                 <KnightCharts knight={selectedKnight} showProjections />
               </div>
             </TabsContent>
           </Tabs>
         ) : (
-          <div className="bg-slate-800 rounded-lg p-6 flex items-center justify-center h-64">
-            <p className="text-slate-400">Select a knight or add a new one to get started</p>
+          <div className="bg-card rounded-lg p-6 flex items-center justify-center h-64">
+            <p className="text-muted-foreground">Select a knight or add a new one to get started</p>
           </div>
         )}
       </div>

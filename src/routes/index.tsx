@@ -9,8 +9,6 @@ export const Route = createFileRoute('/')({
   component: Home,
 })
 
-
-
 export default function Home() {
   const { knights, loadKnights } = useKnightsStore()
 
@@ -23,19 +21,17 @@ export default function Home() {
   }, [knights, loadKnights])
 
   if (!knights) {
-    return <p className="text-center text-slate-400">Loading knights...</p>
+    return <p className="text-center text-muted-foreground">Loading knights...</p>
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white">
-      <div className="container mx-auto py-8 px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">Knights Evolution Tracker</h1>
-        {knights && knights.length > 0 ? (
-          <KnightsDashboard />
-        ) : (
-          <p className="text-center text-slate-400">Loading knights...</p>
-        )}
-      </div>
-    </main>
+    <>
+      <h1 className="text-3xl font-bold mb-8 text-center">Knights Evolution Tracker</h1>
+      {knights && knights.length > 0 ? (
+        <KnightsDashboard />
+      ) : (
+        <p className="text-center text-muted-foreground">Loading knights...</p>
+      )}
+    </>
   )
 }

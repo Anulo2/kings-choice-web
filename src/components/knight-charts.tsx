@@ -37,19 +37,31 @@ export function KnightCharts({ knight, showProjections = false }: KnightChartsPr
   const attributeConfig = {
     forza: {
       label: "Strength",
-      color: "hsl(var(--chart-1))",
+      theme: {
+        light: "hsl(var(--chart-1))",
+        dark: "hsl(var(--chart-1))",
+      },
     },
     intelletto: {
       label: "Intellect",
-      color: "hsl(var(--chart-2))",
+      theme: {
+        light: "hsl(var(--chart-2))",
+        dark: "hsl(var(--chart-2))",
+      },
     },
     comando: {
       label: "Command",
-      color: "hsl(var(--chart-3))",
+      theme: {
+        light: "hsl(var(--chart-3))",
+        dark: "hsl(var(--chart-3))",
+      },
     },
     carisma: {
       label: "Charisma",
-      color: "hsl(var(--chart-4))",
+      theme: {
+        light: "hsl(var(--chart-4))",
+        dark: "hsl(var(--chart-4))",
+      },
     },
   }
 

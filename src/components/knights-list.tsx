@@ -11,7 +11,7 @@ interface KnightsListProps {
 export function KnightsList({ knights, selectedKnightId, onSelectKnight }: KnightsListProps) {
   if (knights.length === 0) {
     return (
-      <div className="text-center py-8 text-slate-400">
+      <div className="text-center py-8 text-muted-foreground">
         <p>No knights added yet</p>
       </div>
     )
@@ -28,8 +28,8 @@ export function KnightsList({ knights, selectedKnightId, onSelectKnight }: Knigh
             className={cn(
               "flex items-center gap-3 p-3 rounded-md cursor-pointer transition-colors",
               selectedKnightId === knight.nome
-                ? "bg-slate-700"
-                : "hover:bg-slate-700/50"
+                ? "bg-accent text-accent-foreground"
+                : "hover:bg-accent/50"
             )}
             onClick={() => onSelectKnight(knight.nome)}
             onKeyDown={(e) => {
@@ -38,12 +38,12 @@ export function KnightsList({ knights, selectedKnightId, onSelectKnight }: Knigh
               }
             }}
           >
-            <div className="bg-slate-700 p-2 rounded-full">
-              <Shield className="h-5 w-5 text-amber-500" />
+            <div className="bg-accent p-2 rounded-full">
+              <Shield className="h-5 w-5 text-primary" />
             </div>
             <div>
               <h3 className="font-medium">{knight.nome}</h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 Level {latestProgress.livello} • Rank {latestProgress.rango}
               </p>
             </div>

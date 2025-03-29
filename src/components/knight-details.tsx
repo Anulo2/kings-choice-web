@@ -29,10 +29,10 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
   }
   
   const attributeColors = {
-    forza: "text-red-500",
-    intelletto: "text-blue-500",
-    comando: "text-yellow-500",
-    carisma: "text-green-500",
+    forza: "text-chart-1",
+    intelletto: "text-chart-2",
+    comando: "text-chart-3",
+    carisma: "text-chart-4",
   }
 
   const handleAddProgress = (newProgress: KnightProgress) => {
@@ -71,9 +71,9 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-3xl font-bold">{latestProgress.livello}</p>
-                    <p className="text-sm text-slate-400">Current Level</p>
+                    <p className="text-sm text-muted-foreground">Current Level</p>
                   </div>
-                  <Badge className="text-lg px-3 py-1 bg-amber-500/20 text-amber-500 border-amber-500/50">
+                  <Badge className="text-lg px-3 py-1 bg-primary/20 text-primary border-primary/50">
                     Rank {latestProgress.rango}
                   </Badge>
                 </div>
@@ -86,7 +86,7 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
               </CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold">{latestProgress.potenza.toLocaleString()}</p>
-                <p className="text-sm text-slate-400">Total Power</p>
+                <p className="text-sm text-muted-foreground">Total Power</p>
               </CardContent>
             </Card>
           </div>
@@ -167,10 +167,10 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
 
 function TalentCard({ talent }: { talent: Talent }) {
   const typeColors = {
-    forza: "border-red-500/20 bg-red-500/10",
-    intelletto: "border-blue-500/20 bg-blue-500/10",
-    comando: "border-yellow-500/20 bg-yellow-500/10",
-    carisma: "border-green-500/20 bg-green-500/10",
+    forza: "border-chart-1/20 bg-chart-1/10",
+    intelletto: "border-chart-2/20 bg-chart-2/10",
+    comando: "border-chart-3/20 bg-chart-3/10",
+    carisma: "border-chart-4/20 bg-chart-4/10",
   }
   
   return (
@@ -178,19 +178,19 @@ function TalentCard({ talent }: { talent: Talent }) {
       <div className="flex justify-between items-start">
         <div>
           <h4 className="font-medium">{talent.nome}</h4>
-          <p className="text-xs text-slate-400 capitalize">{talent.genere}</p>
+          <p className="text-xs text-muted-foreground capitalize">{talent.genere}</p>
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-amber-400 font-bold">+{talent.buff}%</span>
+          <span className="text-primary font-bold">+{talent.buff}%</span>
         </div>
       </div>
       <div className="flex justify-between items-center mt-2">
         <div className="flex">
           {Array.from({ length: talent.stelle }).map((_, i) => (
-            <Award key={`${talent.nome}-star-${i}`} className="h-4 w-4 text-amber-400" />
+            <Award key={`${talent.nome}-star-${i}`} className="h-4 w-4 text-primary" />
           ))}
           {Array.from({ length: 5 - talent.stelle }).map((_, i) => (
-            <Award key={`${talent.nome}-empty-${i}`} className="h-4 w-4 text-slate-600" />
+            <Award key={`${talent.nome}-empty-${i}`} className="h-4 w-4 text-muted" />
           ))}
         </div>
         <Badge variant="outline">Lvl {talent.livello}</Badge>
