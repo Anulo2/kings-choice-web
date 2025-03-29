@@ -63,6 +63,20 @@ export function KnightCharts({ knight, showProjections = false }: KnightChartsPr
         dark: "hsl(var(--chart-4))",
       },
     },
+    power: {
+      label: "Power",
+      theme: {
+        light: "hsl(var(--primary))",
+        dark: "hsl(var(--primary))",
+      },
+    },
+    level: {
+      label: "Level",
+      theme: {
+        light: "hsl(var(--primary))",
+        dark: "hsl(var(--primary))",
+      },
+    }
   }
 
   return (
@@ -76,7 +90,7 @@ export function KnightCharts({ knight, showProjections = false }: KnightChartsPr
         
         <TabsContent value="attributes" className="mt-6">
           <Card>
-            <CardHeader>
+            <CardHeader className="pl-4 mb-2" style={{ borderLeft: '4px solid hsl(var(--chart-1))' }}>
               <CardTitle>Attributes Evolution</CardTitle>
               <CardDescription>
                 {showProjections 
@@ -166,7 +180,7 @@ export function KnightCharts({ knight, showProjections = false }: KnightChartsPr
         
         <TabsContent value="power" className="mt-6">
           <Card>
-            <CardHeader>
+            <CardHeader className="pl-4 mb-2" style={{ borderLeft: '4px solid hsl(var(--primary))' }}>
               <CardTitle>Power Evolution</CardTitle>
               <CardDescription>
                 {showProjections 
@@ -209,7 +223,7 @@ export function KnightCharts({ knight, showProjections = false }: KnightChartsPr
         
         <TabsContent value="level" className="mt-6">
           <Card>
-            <CardHeader>
+            <CardHeader className="pl-4 mb-2" style={{ borderLeft: '4px solid hsl(var(--primary))' }}>
               <CardTitle>Level Progression</CardTitle>
               <CardDescription>
                 {showProjections 

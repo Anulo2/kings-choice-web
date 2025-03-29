@@ -6,11 +6,11 @@ import { ShieldIcon } from 'lucide-react'
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-10 p-2 flex gap-2 bg-card text-card-foreground border-b border-border justify-between">
-      <div className="container mx-auto flex justify-between items-center">
+    <header className="sticky top-0 z-10 bg-gradient-to-r from-card via-card/95 to-card border-b border-border shadow-sm">
+      <div className="container mx-auto flex justify-between items-center py-3 px-4">
         <div className="flex items-center gap-2">
-          <ShieldIcon className="h-5 w-5 text-primary" />
-          <Link to="/" className="font-bold text-lg">
+          <ShieldIcon className="h-6 w-6 text-primary" />
+          <Link to="/" className="font-bold text-lg text-card-foreground">
             King's Choice Web
           </Link>
         </div>

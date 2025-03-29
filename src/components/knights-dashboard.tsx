@@ -7,8 +7,9 @@ import { KnightDetails } from "@/components/knight-details"
 import { KnightCharts } from "@/components/knight-charts"
 import { KnightForm } from "@/components/knight-form"
 import { Button } from "@/components/ui/button"
-import { PlusCircle } from 'lucide-react'
+import { PlusCircle, ShieldIcon } from 'lucide-react'
 import { useKnightsStore } from "@/lib/store"
+import { cn } from "@/lib/utils"
 
 export function KnightsDashboard() {
   const { knights } = useKnightsStore()
@@ -22,30 +23,40 @@ export function KnightsDashboard() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <div className="lg:col-span-1 bg-card rounded-lg p-4 h-fit">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Knights</h2>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setIsAddingKnight(true)}
-            className="flex items-center gap-1"
-          >
-            <PlusCircle className="h-4 w-4" />
-            <span>Add</span>
-          </Button>
+      <div className="lg:col-span-1">
+        <div className="bg-card rounded-lg border border-border/60 shadow-md overflow-hidden">
+          <div className="bg-gradient-to-r from-primary/10 via-accent/5 to-transparent p-4">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-2">
+                <ShieldIcon className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Knights</h2>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setIsAddingKnight(true)}
+                className="flex items-center gap-1 border-primary/50 hover:bg-primary/10 cursor-pointer transition-all duration-200 hover:shadow-sm"
+              >
+                <PlusCircle className="h-4 w-4" />
+                <span>Add</span>
+              </Button>
+            </div>
+            <KnightsList 
+              knights={knights} 
+              selectedKnightId={selectedKnightId}
+              onSelectKnight={setSelectedKnightId}
+            />
+          </div>
         </div>
-        <KnightsList 
-          knights={knights} 
-          selectedKnightId={selectedKnightId}
-          onSelectKnight={setSelectedKnightId}
-        />
       </div>
       
       <div className="lg:col-span-3">
         {isAddingKnight ? (
-          <div className="bg-card rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">Add New Knight</h2>
+          <div className="bg-card rounded-lg border border-border/60 shadow-md p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-6 w-1 bg-primary rounded" />
+              <h2 className="text-xl font-bold">Add New Knight</h2>
+            </div>
             <KnightForm 
               onCancel={() => setIsAddingKnight(false)}
               onComplete={() => {
@@ -57,37 +68,43 @@ export function KnightsDashboard() {
             />
           </div>
         ) : selectedKnight ? (
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-3 mb-6">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="details">Details</TabsTrigger>
-              <TabsTrigger value="projections">Projections</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview" className="mt-0">
-              <div className="bg-card rounded-lg p-6">
-                <h2 className="text-2xl font-bold mb-6">{selectedKnight.nome}</h2>
+          <div className="bg-card rounded-lg border border-border/60 shadow-md overflow-hidden">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <div className="border-b border-border">
+                <div className="w-full px-6 pt-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="flex items-center justify-center p-2 h-10 w-10 rounded-full bg-primary/10">
+                      <ShieldIcon className="h-5 w-5 text-primary" />
+                    </span>
+                    <h2 className="text-2xl font-bold">{selectedKnight.nome}</h2>
+                  </div>
+                  <TabsList className="grid grid-cols-3 w-full">
+                    <TabsTrigger value="overview" className="cursor-pointer hover:bg-background/80">Overview</TabsTrigger>
+                    <TabsTrigger value="details" className="cursor-pointer hover:bg-background/80">Details</TabsTrigger>
+                    <TabsTrigger value="projections" className="cursor-pointer hover:bg-background/80">Projections</TabsTrigger>
+                  </TabsList>
+                </div>
+              </div>
+              
+              <TabsContent value="overview" className="p-6">
                 <KnightDetails knight={selectedKnight} />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="details" className="mt-0">
-              <div className="bg-card rounded-lg p-6">
-                <h2 className="text-2xl font-bold mb-6">{selectedKnight.nome} - Evolution</h2>
+              </TabsContent>
+              
+              <TabsContent value="details" className="p-6">
                 <KnightCharts knight={selectedKnight} />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="projections" className="mt-0">
-              <div className="bg-card rounded-lg p-6">
-                <h2 className="text-2xl font-bold mb-6">{selectedKnight.nome} - Projections</h2>
+              </TabsContent>
+              
+              <TabsContent value="projections" className="p-6">
                 <KnightCharts knight={selectedKnight} showProjections />
-              </div>
-            </TabsContent>
-          </Tabs>
+              </TabsContent>
+            </Tabs>
+          </div>
         ) : (
-          <div className="bg-card rounded-lg p-6 flex items-center justify-center h-64">
-            <p className="text-muted-foreground">Select a knight or add a new one to get started</p>
+          <div className="bg-card rounded-lg border border-border/60 shadow-md p-6 flex items-center justify-center h-64">
+            <div className="text-center">
+              <ShieldIcon className="h-10 w-10 text-muted-foreground mx-auto mb-4 opacity-50" />
+              <p className="text-muted-foreground">Select a knight or add a new one to get started</p>
+            </div>
           </div>
         )}
       </div>

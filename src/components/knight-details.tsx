@@ -138,17 +138,45 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
                   </div>
                 </TabsContent>
                 
-                {["forza", "intelletto", "comando", "carisma"].map((type) => (
-                  <TabsContent key={type} value={type} className="mt-0">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {latestProgress.talenti
-                        .filter((t) => t.genere === type)
-                        .map((talent) => (
-                          <TalentCard key={talent.nome} talent={talent} />
-                        ))}
-                    </div>
-                  </TabsContent>
-                ))}
+                <TabsContent value="forza" className="mt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {latestProgress.talenti
+                      .filter((t) => t.genere === "forza")
+                      .map((talent) => (
+                        <TalentCard key={talent.nome} talent={talent} />
+                      ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="intelletto" className="mt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {latestProgress.talenti
+                      .filter((t) => t.genere === "intelletto")
+                      .map((talent) => (
+                        <TalentCard key={talent.nome} talent={talent} />
+                      ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="comando" className="mt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {latestProgress.talenti
+                      .filter((t) => t.genere === "comando")
+                      .map((talent) => (
+                        <TalentCard key={talent.nome} talent={talent} />
+                      ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="carisma" className="mt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {latestProgress.talenti
+                      .filter((t) => t.genere === "carisma")
+                      .map((talent) => (
+                        <TalentCard key={talent.nome} talent={talent} />
+                      ))}
+                  </div>
+                </TabsContent>
               </Tabs>
             </CardContent>
           </Card>
@@ -166,19 +194,40 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
 }
 
 function TalentCard({ talent }: { talent: Talent }) {
-  const typeColors = {
-    forza: "border-chart-1/20 bg-chart-1/10",
-    intelletto: "border-chart-2/20 bg-chart-2/10",
-    comando: "border-chart-3/20 bg-chart-3/10",
-    carisma: "border-chart-4/20 bg-chart-4/10",
+  const typeColorMap = {
+    forza: {
+      bgGradient: "from-chart-1/20 to-chart-1/5",
+      borderColor: "hsl(var(--chart-1) / 0.3)",
+      textColor: "hsl(var(--chart-1))"
+    },
+    intelletto: {
+      bgGradient: "from-chart-2/20 to-chart-2/5",
+      borderColor: "hsl(var(--chart-2) / 0.3)",
+      textColor: "hsl(var(--chart-2))"
+    },
+    comando: {
+      bgGradient: "from-chart-3/20 to-chart-3/5",
+      borderColor: "hsl(var(--chart-3) / 0.3)",
+      textColor: "hsl(var(--chart-3))"
+    },
+    carisma: {
+      bgGradient: "from-chart-4/20 to-chart-4/5",
+      borderColor: "hsl(var(--chart-4) / 0.3)",
+      textColor: "hsl(var(--chart-4))"
+    },
   }
   
+  const colors = typeColorMap[talent.genere as keyof typeof typeColorMap];
+  
   return (
-    <div className={`p-3 rounded-md border ${typeColors[talent.genere as keyof typeof typeColors]}`}>
+    <div 
+      className={`p-3 rounded-md border bg-gradient-to-br ${colors.bgGradient} cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.01]`}
+      style={{ borderColor: colors.borderColor }}
+    >
       <div className="flex justify-between items-start">
         <div>
           <h4 className="font-medium">{talent.nome}</h4>
-          <p className="text-xs text-muted-foreground capitalize">{talent.genere}</p>
+          <p className="text-xs capitalize" style={{ color: colors.textColor }}>{talent.genere}</p>
         </div>
         <div className="flex items-center gap-1">
           <span className="text-primary font-bold">+{talent.buff}%</span>
@@ -193,7 +242,12 @@ function TalentCard({ talent }: { talent: Talent }) {
             <Award key={`${talent.nome}-empty-${i}`} className="h-4 w-4 text-muted" />
           ))}
         </div>
-        <Badge variant="outline">Lvl {talent.livello}</Badge>
+        <Badge 
+          variant="outline" 
+          style={{ color: colors.textColor, borderColor: colors.borderColor }}
+        >
+          Lvl {talent.livello}
+        </Badge>
       </div>
     </div>
   )

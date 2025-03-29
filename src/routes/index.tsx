@@ -26,7 +26,14 @@ export default function Home() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold mb-8 text-center">Knights Evolution Tracker</h1>
+      <div className="flex flex-col items-center mb-8 relative">
+        <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent rounded-full blur-sm" />
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+          Knights Evolution <span className="text-primary">Tracker</span>
+        </h1>
+        <div className="mt-2 h-1 w-20 bg-gradient-to-r from-chart-1 via-chart-4 to-chart-2" />
+      </div>
+      
       {knights && knights.length > 0 ? (
         <KnightsDashboard />
       ) : (
