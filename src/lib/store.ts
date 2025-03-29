@@ -1,9 +1,6 @@
 import { create } from "zustand"
-//import { devtools } from 'zustand/middleware'
 import type { Knight } from "./types"
-import { initialData } from "./initial-data";
-import { devtools } from "zustand/middleware";
-import { persist, createJSONStorage } from "zustand/middleware";
+import {devtools, persist, createJSONStorage } from "zustand/middleware";
 
 interface KnightsStore {
   knights: Knight[];
@@ -20,7 +17,7 @@ export const useKnightsStore = create<KnightsStore>()(
 		persist(
   
   (set) => ({
-  knights: initialData.cavalieri,
+  knights: [],
   
   addKnight: (knight) => set((state) => ({ knights: [...state.knights, knight] })),
   updateKnight: (knight) => set((state) => ({

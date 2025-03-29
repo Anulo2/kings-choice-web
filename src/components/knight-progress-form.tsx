@@ -87,6 +87,13 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
       potenza: values.potenza,
       talenti_totali: talents.length,
       talenti: talents,
+      bonus_amante: {
+        forza: 0,
+        intelletto: 0,
+        comando: 0,
+        carisma: 0
+      },
+      buff_cavalcatura: 0
     }
 
     onSave(newProgress)

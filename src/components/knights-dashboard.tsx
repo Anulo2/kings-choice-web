@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { KnightsList } from "@/components/knights-list"
 import { KnightDetails } from "@/components/knight-details"
@@ -9,7 +9,6 @@ import { KnightForm } from "@/components/knight-form"
 import { Button } from "@/components/ui/button"
 import { PlusCircle, ShieldIcon } from 'lucide-react'
 import { useKnightsStore } from "@/lib/store"
-import { cn } from "@/lib/utils"
 
 export function KnightsDashboard() {
   const { knights } = useKnightsStore()
@@ -18,6 +17,13 @@ export function KnightsDashboard() {
   )
   const [activeTab, setActiveTab] = useState("overview")
   const [isAddingKnight, setIsAddingKnight] = useState(false)
+
+  // Update selected knight when the knights list changes (e.g. after deletion)
+  useEffect(() => {
+    if (selectedKnightId && !knights.some(k => k.nome === selectedKnightId)) {
+      setSelectedKnightId(knights.length > 0 ? knights[0].nome : null)
+    }
+  }, [knights, selectedKnightId])
 
   const selectedKnight = knights.find(knight => knight.nome === selectedKnightId) || null
 

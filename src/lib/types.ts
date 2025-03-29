@@ -36,6 +36,13 @@ export interface Knight {
       comando: number
       carisma: number
     }
+    bonus_amante: {
+      forza: number
+      intelletto: number
+      comando: number
+      carisma: number
+    }
+    buff_cavalcatura: number
     attributi_totali: number
     potenza: number
     talenti_totali: number
@@ -49,4 +56,3 @@ export interface Knight {
     livello: number
     stelle: number
   }
-  

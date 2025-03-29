@@ -36,6 +36,13 @@ export const initialData = {
               "comando": 94800,
               "carisma": 146300
             },
+            "bonus_amante": {
+              "forza": 0,
+              "intelletto": 0,
+              "comando": 0,
+              "carisma": 0
+            },
+            "buff_cavalcatura": 0,
             "attributi_totali": 1256477,
             "potenza": 202900,
             "talenti_totali": 110,
@@ -129,6 +136,13 @@ export const initialData = {
               "comando": 0,
               "carisma": 0
             },
+            "bonus_amante": {
+              "forza": 0,
+              "intelletto": 0,
+              "comando": 0,
+              "carisma": 0
+            },
+            "buff_cavalcatura": 0,
             "attributi_totali": 21124,
             "potenza": 12000,
             "talenti_totali": 19,
@@ -203,6 +217,13 @@ export const initialData = {
               "comando": 0,
               "carisma": 0
             },
+            "bonus_amante": {
+              "forza": 0,
+              "intelletto": 0,
+              "comando": 0,
+              "carisma": 0
+            },
+            "buff_cavalcatura": 0,
             "attributi_totali": 21510,
             "potenza": 12120,
             "talenti_totali": 19,
@@ -253,4 +274,3 @@ export const initialData = {
       }
     }
   }
-  

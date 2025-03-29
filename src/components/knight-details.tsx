@@ -215,9 +215,37 @@ function TalentCard({ talent }: { talent: Talent }) {
       borderColor: "hsl(var(--chart-4) / 0.3)",
       textColor: "hsl(var(--chart-4))"
     },
+    // Map English names to match the talent form options
+    strength: {
+      bgGradient: "from-chart-1/20 to-chart-1/5",
+      borderColor: "hsl(var(--chart-1) / 0.3)",
+      textColor: "hsl(var(--chart-1))"
+    },
+    intellect: {
+      bgGradient: "from-chart-2/20 to-chart-2/5",
+      borderColor: "hsl(var(--chart-2) / 0.3)",
+      textColor: "hsl(var(--chart-2))"
+    },
+    command: {
+      bgGradient: "from-chart-3/20 to-chart-3/5",
+      borderColor: "hsl(var(--chart-3) / 0.3)",
+      textColor: "hsl(var(--chart-3))"
+    },
+    charisma: {
+      bgGradient: "from-chart-4/20 to-chart-4/5",
+      borderColor: "hsl(var(--chart-4) / 0.3)",
+      textColor: "hsl(var(--chart-4))"
+    },
+    // Fallback for "other" or any unrecognized type
+    other: {
+      bgGradient: "from-muted/20 to-muted/5",
+      borderColor: "hsl(var(--muted) / 0.3)",
+      textColor: "hsl(var(--muted-foreground))"
+    }
   }
   
-  const colors = typeColorMap[talent.genere as keyof typeof typeColorMap];
+  // Get colors from map or use the "other" fallback if type doesn't exist
+  const colors = typeColorMap[talent.genere as keyof typeof typeColorMap] || typeColorMap.other;
   
   return (
     <div 
