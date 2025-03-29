@@ -7,9 +7,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
-import { Sword, Brain, CommandIcon, Heart, Award, Plus } from 'lucide-react'
+import { Sword, Brain, CommandIcon, Heart, Award, Plus, User, Pencil } from 'lucide-react'
 import { KnightProgressForm } from "@/components/knight-progress-form"
+import { KnightProfileEdit } from "@/components/knight-profile-edit"
+import { AttributeProficiencyIcon } from "@/components/attribute-proficiency-icon"
 import { useKnightsStore } from "@/lib/store"
+import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 interface KnightDetailsProps {
   knight: Knight
@@ -17,6 +21,7 @@ interface KnightDetailsProps {
 
 export function KnightDetails({ knight }: KnightDetailsProps) {
   const [isAddingProgress, setIsAddingProgress] = useState(false)
+  const [isEditingProfile, setIsEditingProfile] = useState(false)
   const { updateKnight } = useKnightsStore()
   
   const latestProgress = knight.andamento[knight.andamento.length - 1]
@@ -43,6 +48,16 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
     updateKnight(updatedKnight)
     setIsAddingProgress(false)
   }
+  
+  const handleSaveProfile = (profileData: { foto?: string; attributiProficienti: string[] }) => {
+    const updatedKnight = {
+      ...knight,
+      foto: profileData.foto,
+      attributiProficienti: profileData.attributiProficienti
+    }
+    updateKnight(updatedKnight)
+    setIsEditingProfile(false)
+  }
 
   return (
     <div className="space-y-6">
@@ -57,6 +72,20 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
               knight={knight}
               onSave={handleAddProgress}
               onCancel={() => setIsAddingProgress(false)}
+            />
+          </CardContent>
+        </Card>
+      ) : isEditingProfile ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Edit Knight Profile</CardTitle>
+            <CardDescription>Update {knight.nome}'s image and proficient attributes</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <KnightProfileEdit 
+              knight={knight}
+              onSave={handleSaveProfile}
+              onCancel={() => setIsEditingProfile(false)}
             />
           </CardContent>
         </Card>
@@ -92,25 +121,89 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
           </div>
           
           <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg">Knight Profile</CardTitle>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setIsEditingProfile(true)}
+                className="h-8 w-8 p-0"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="flex flex-col md:flex-row gap-4 items-center">
+              <div className="w-24 h-24 relative rounded-full overflow-hidden border-2 border-primary">
+                {knight.foto ? (
+                  <img 
+                    src={knight.foto} 
+                    alt={knight.nome} 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-muted">
+                    <User className="h-12 w-12 text-muted-foreground" />
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col items-center md:items-start">
+                <h3 className="font-bold text-xl">{knight.nome}</h3>
+                {knight.attributiProficienti?.length > 0 && (
+                  <div className="flex items-center gap-3 mt-2">
+                    <AttributeProficiencyIcon attributes={knight.attributiProficienti} size="md" />
+                    <div className="flex flex-wrap gap-1">
+                      {knight.attributiProficienti.map((attr) => (
+                        <Badge key={attr} variant="outline" className={`${attributeColors[attr]} border-${attributeColors[attr].replace('text-', '')}/30`}>
+                          <span className="flex items-center gap-1">
+                            {attributeIcons[attr]}
+                            <span className="capitalize">{attr}</span>
+                          </span>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
             <CardHeader>
               <CardTitle className="text-lg">Attributes</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {Object.entries(latestProgress.attributi_totale).map(([key, value]) => (
-                  <div key={key} className="space-y-1">
-                    <div className="flex justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className={attributeColors[key as keyof typeof attributeColors]}>
-                          {attributeIcons[key as keyof typeof attributeIcons]}
-                        </span>
-                        <span className="capitalize">{key}</span>
+                {Object.entries(latestProgress.attributi_totale).map(([key, value]) => {
+                  const isProficient = knight.attributiProficienti?.includes(key);
+                  return (
+                    <div key={key} className="space-y-1">
+                      <div className="flex justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className={cn(
+                            attributeColors[key as keyof typeof attributeColors],
+                            isProficient && "font-bold"
+                          )}>
+                            {attributeIcons[key as keyof typeof attributeIcons]}
+                          </span>
+                          <span className={cn(
+                            "capitalize", 
+                            isProficient && "font-semibold"
+                          )}>
+                            {key}{isProficient && " ★"}
+                          </span>
+                        </div>
+                        <span className="font-medium">{value.toLocaleString()}</span>
                       </div>
-                      <span className="font-medium">{value.toLocaleString()}</span>
+                      <Progress 
+                        value={(value / latestProgress.attributi_totali) * 100} 
+                        className={cn(
+                          "h-2",
+                          isProficient && "bg-primary/20"
+                        )} 
+                      />
                     </div>
-                    <Progress value={(value / latestProgress.attributi_totali) * 100} className="h-2" />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
@@ -181,9 +274,17 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
             </CardContent>
           </Card>
           
-          <div className="flex justify-end">
-            <Button onClick={() => setIsAddingProgress(true)}>
-              <Plus className="h-4 w-4 mr-2" />
+          <div className="flex justify-between">
+            <Button 
+              variant="outline"
+              onClick={() => setIsEditingProfile(true)}
+              className="flex items-center gap-2"
+            >
+              <Pencil className="h-4 w-4" />
+              Edit Profile
+            </Button>
+            <Button onClick={() => setIsAddingProgress(true)} className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
               Add Progress Entry
             </Button>
           </div>

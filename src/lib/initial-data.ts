@@ -2,6 +2,8 @@ export const initialData = {
     "cavalieri": [
       {
         "nome": "Conte di Warwick",
+        "attributiProficienti": ["forza", "intelletto", "carisma"],
+        "foto": "https://i.imgur.com/7bIUvAJ.png", // Immagine placeholder di un cavaliere versatile
         "andamento": [
           {
             "livello": 250,
@@ -102,6 +104,8 @@ export const initialData = {
       },
       {
         "nome": "John Blanke",
+        "attributiProficienti": ["carisma"], 
+        "foto": "https://i.imgur.com/QF4Y5Lr.png", // Immagine placeholder di un trombettiere
         "andamento": [
           {
             "livello": 100,

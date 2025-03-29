@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { DataManagement } from '@/components/data-management'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { ShieldIcon } from 'lucide-react'
@@ -24,6 +25,7 @@ export default function Header() {
           >
             Dashboard
           </Link>
+          <DataManagement />
           <ThemeToggle />
         </nav>
       </div>

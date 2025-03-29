@@ -1,5 +1,7 @@
 export interface Knight {
     nome: string
+    attributiProficienti: ("forza" | "intelletto" | "comando" | "carisma")[]
+    foto?: string
     andamento: KnightProgress[]
   }
   

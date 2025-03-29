@@ -1,6 +1,6 @@
 import type { Knight } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { Shield, Trash2 } from 'lucide-react'
+import { Shield, Trash2, Sword, Brain, CommandIcon, Heart, User } from 'lucide-react'
 import { Button } from "./ui/button"
 import { useKnightsStore } from "@/lib/store"
 import { 
@@ -15,6 +15,9 @@ import {
   AlertDialogTrigger
 } from "./ui/alert-dialog"
 import { useEffect } from "react"
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
+import { Badge } from "./ui/badge"
+import { AttributeProficiencyIcon } from "./attribute-proficiency-icon"
 
 interface KnightsListProps {
   knights: Knight[]
@@ -24,6 +27,20 @@ interface KnightsListProps {
 
 export function KnightsList({ knights, selectedKnightId, onSelectKnight }: KnightsListProps) {
   const { deleteKnight } = useKnightsStore()
+  
+  const attributeIcons = {
+    forza: <Sword className="h-3 w-3" />,
+    intelletto: <Brain className="h-3 w-3" />,
+    comando: <CommandIcon className="h-3 w-3" />,
+    carisma: <Heart className="h-3 w-3" />,
+  }
+  
+  const attributeColors = {
+    forza: "text-chart-1 bg-chart-1/20 border-chart-1/30",
+    intelletto: "text-chart-2 bg-chart-2/20 border-chart-2/30",
+    comando: "text-chart-3 bg-chart-3/20 border-chart-3/30",
+    carisma: "text-chart-4 bg-chart-4/20 border-chart-4/30",
+  }
 
   // Debug logging to help identify selection issues
   useEffect(() => {
@@ -56,10 +73,10 @@ export function KnightsList({ knights, selectedKnightId, onSelectKnight }: Knigh
               type="button"
               variant={isSelected ? "secondary" : "ghost"}
               className={cn(
-                "flex w-full items-center gap-3 hover:bg-accent/50 p-3 pr-10 rounded-md cursor-pointer transition-all duration-200 justify-start text-left",
+                "flex w-full items-center gap-3 p-3 pr-10 rounded-md cursor-pointer transition-all duration-200 hover:scale-[1.01] justify-start text-left h-auto",
                 isSelected
                   ? "bg-primary/15 border border-primary/25 shadow-sm"
-                  : "hover:bg-accent/50 border border-transparent"
+                  : "hover:bg-accent/30 border border-transparent"
               )}
               onClick={() => {
                 console.log("Clicked knight:", knight.nome);
@@ -73,17 +90,31 @@ export function KnightsList({ knights, selectedKnightId, onSelectKnight }: Knigh
               tabIndex={0}
               aria-pressed={isSelected}
             >
-              <div className={cn(
-                "p-2 rounded-full transition-colors",
-                isSelected ? "bg-primary/20" : "bg-accent/20"
+              <Avatar className={cn(
+                "h-10 w-10 border",
+                isSelected ? "border-primary" : "border-muted"
               )}>
-                <Shield className={cn(
-                  "h-5 w-5 transition-colors",
-                  isSelected ? "text-primary" : "text-muted-foreground"
-                )} />
-              </div>
+                {knight.foto ? (
+                  <AvatarImage src={knight.foto} alt={knight.nome} />
+                ) : (
+                  <AvatarFallback className={cn(
+                    "bg-accent/20",
+                    isSelected ? "text-primary" : "text-muted-foreground"
+                  )}>
+                    <User className="h-5 w-5" />
+                  </AvatarFallback>
+                )}
+              </Avatar>
+
               <div className="flex-1">
-                <h3 className="font-medium">{knight.nome}</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-medium">{knight.nome}</h3>
+                  {knight.attributiProficienti && knight.attributiProficienti.length > 0 && (
+                    <div className="flex items-center">
+                      <AttributeProficiencyIcon attributes={knight.attributiProficienti} size="sm" />
+                    </div>
+                  )}
+                </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className={cn(
                     "inline-flex items-center",
@@ -95,6 +126,10 @@ export function KnightsList({ knights, selectedKnightId, onSelectKnight }: Knigh
                   <span className="inline-flex items-center text-muted-foreground">
                     Rank {latestProgress.rango}
                   </span>
+                  <span className="text-muted-foreground">•</span>
+                  <span className="inline-flex items-center text-muted-foreground">
+                    {latestProgress.potenza.toLocaleString()} Power
+                  </span>
                 </div>
               </div>
             </Button>
@@ -104,7 +139,7 @@ export function KnightsList({ knights, selectedKnightId, onSelectKnight }: Knigh
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 text-destructive cursor-pointer hover:text-destructive-foreground hover:bg-primary "
+                  className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 text-destructive cursor-pointer hover:text-destructive-foreground hover:bg-destructive hover:scale-105"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
