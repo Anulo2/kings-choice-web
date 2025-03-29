@@ -7,6 +7,7 @@ import { resolve } from "node:path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/kings-choice-web/",
   plugins: [TanStackRouterVite({  }), react(), tailwindcss()],
   test: {
     globals: true,

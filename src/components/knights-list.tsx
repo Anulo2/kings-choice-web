@@ -56,10 +56,10 @@ export function KnightsList({ knights, selectedKnightId, onSelectKnight }: Knigh
               type="button"
               variant={isSelected ? "secondary" : "ghost"}
               className={cn(
-                "flex w-full items-center gap-3 p-3 pr-10 rounded-md cursor-pointer transition-all duration-200 hover:scale-[1.01] justify-start text-left",
+                "flex w-full items-center gap-3 hover:bg-accent/50 p-3 pr-10 rounded-md cursor-pointer transition-all duration-200 justify-start text-left",
                 isSelected
                   ? "bg-primary/15 border border-primary/25 shadow-sm"
-                  : "hover:bg-accent/30 border border-transparent"
+                  : "hover:bg-accent/50 border border-transparent"
               )}
               onClick={() => {
                 console.log("Clicked knight:", knight.nome);
@@ -104,7 +104,7 @@ export function KnightsList({ knights, selectedKnightId, onSelectKnight }: Knigh
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 text-destructive cursor-pointer hover:text-destructive-foreground hover:bg-destructive hover:scale-105"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 text-destructive cursor-pointer hover:text-destructive-foreground hover:bg-primary "
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
