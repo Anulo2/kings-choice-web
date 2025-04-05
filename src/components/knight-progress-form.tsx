@@ -9,12 +9,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { Knight, KnightProgress, Talent } from "@/lib/types"
-import { Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2, Sword, BookOpen, Handshake, Flag, Pencil } from "lucide-react"
 import { Card } from "@/components/ui/card"
 
 const formSchema = z.object({
   livello: z.coerce.number().min(1, { message: "Level must be at least 1" }),
-  rango: z.coerce.number().min(1).max(5, { message: "Rank must be between 1 and 5" }),
+  rango: z.coerce.number().min(1).max(6, { message: "Rank must be between 1 and 6" }),
   forza: z.coerce.number().min(0, { message: "Strength must be a positive number" }),
   intelletto: z.coerce.number().min(0, { message: "Intellect must be a positive number" }),
   comando: z.coerce.number().min(0, { message: "Command must be a positive number" }),
@@ -93,6 +93,12 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
         comando: 0,
         carisma: 0
       },
+      aura_buff: {
+        forza: 0,
+        intelletto: 0,
+        comando: 0,
+        carisma: 0
+      },
       buff_cavalcatura: 0
     }
 
@@ -103,7 +109,6 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
   const [newTalent, setNewTalent] = useState<Partial<Talent>>({
     nome: "",
     genere: "forza",
-    buff: 0,
     livello: 1,
     stelle: 1,
   })
@@ -112,15 +117,28 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
     if (
       newTalent.nome &&
       newTalent.genere &&
-      typeof newTalent.buff === "number" &&
       typeof newTalent.livello === "number" &&
       typeof newTalent.stelle === "number"
     ) {
-      setTalents([...talents, newTalent as Talent])
+      // Calculate buff as stars * level
+      const buff = newTalent.stelle * newTalent.livello;
+      
+      // Check if we're editing an existing talent
+      const existingTalentIndex = talents.findIndex(t => t.nome === newTalent.nome);
+      
+      if (existingTalentIndex >= 0) {
+        // Update existing talent
+        const updatedTalents = [...talents];
+        updatedTalents[existingTalentIndex] = {...newTalent, buff} as Talent;
+        setTalents(updatedTalents);
+      } else {
+        // Add new talent
+        setTalents([...talents, {...newTalent, buff} as Talent]);
+      }
+      
       setNewTalent({
         nome: "",
         genere: "forza",
-        buff: 0,
         livello: 1,
         stelle: 1,
       })
@@ -165,7 +183,7 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
                       <SelectValue placeholder="Select rank" />
                     </SelectTrigger>
                     <SelectContent>
-                      {[1, 2, 3, 4, 5].map((rank) => (
+                      {[1, 2, 3, 4, 5, 6].map((rank) => (
                         <SelectItem key={rank} value={rank.toString()}>
                           Rank {rank}
                         </SelectItem>
@@ -270,6 +288,11 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
 
           {showTalentForm && (
             <Card className="p-4 mb-4">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-medium">
+                  {talents.findIndex(t => t.nome === newTalent.nome) >= 0 ? "Update Talent" : "Add Talent"}
+                </h3>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                   <FormLabel>Name</FormLabel>
@@ -277,6 +300,7 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
                     value={newTalent.nome}
                     onChange={(e) => setNewTalent({ ...newTalent, nome: e.target.value })}
                     placeholder="Talent name"
+                    readOnly={talents.findIndex(t => t.nome === newTalent.nome) >= 0}
                   />
                 </div>
 
@@ -290,24 +314,29 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="forza">Strength</SelectItem>
-                      <SelectItem value="intelletto">Intellect</SelectItem>
-                      <SelectItem value="comando">Command</SelectItem>
-                      <SelectItem value="carisma">Charisma</SelectItem>
+                      <SelectItem value="forza" className="flex items-center gap-2">
+                        <Sword className="h-4 w-4 text-chart-1" />
+                        <span>Strength</span>
+                      </SelectItem>
+                      <SelectItem value="intelletto" className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-chart-2" />
+                        <span>Intellect</span>
+                      </SelectItem>
+                      <SelectItem value="comando" className="flex items-center gap-2">
+                        <Handshake className="h-4 w-4 text-chart-3" />
+                        <span>Command</span>
+                      </SelectItem>
+                      <SelectItem value="carisma" className="flex items-center gap-2">
+                        <Flag className="h-4 w-4 text-chart-4" />
+                        <span>Charisma</span>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <FormLabel>Buff (%)</FormLabel>
-                  <Input
-                    type="number"
-                    value={newTalent.buff}
-                    onChange={(e) => setNewTalent({ ...newTalent, buff: Number.parseInt(e.target.value) || 0 })}
-                  />
-                </div>
+                {/* Buff is calculated as stars × level */}
 
                 <div>
                   <FormLabel>Level</FormLabel>
@@ -330,7 +359,7 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
                       <SelectValue placeholder="Select stars" />
                     </SelectTrigger>
                     <SelectContent>
-                      {[1, 2, 3, 4, 5].map((stars) => (
+                      {[1, 2, 3, 4, 5, 6].map((stars) => (
                         <SelectItem key={stars} value={stars.toString()}>
                           {stars} {stars === 1 ? "Star" : "Stars"}
                         </SelectItem>
@@ -345,7 +374,7 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
                   Cancel
                 </Button>
                 <Button type="button" onClick={addTalent}>
-                  Add
+                  {talents.findIndex(t => t.nome === newTalent.nome) >= 0 ? "Update" : "Add"}
                 </Button>
               </div>
             </Card>
@@ -353,20 +382,38 @@ export function KnightProgressForm({ knight, onSave, onCancel }: KnightProgressF
 
           <div className="space-y-2">
             {talents.map((talent, index) => (
-              <div key={talent.nome} className="flex items-center justify-between p-3 bg-slate-800 rounded-md">
+              <div key={talent.nome} className="flex items-center justify-between p-3 bg-muted/70 dark:bg-slate-800 rounded-md">
                 <div>
                   <span className="font-medium">{talent.nome}</span>
-                  <div className="text-xs text-slate-400">
-                    <span className="capitalize">{talent.genere}</span> \u2022<span> +{talent.buff}% \u2022 </span>
-                    <span>Level {talent.livello} \u2022 </span>
-                    <span>
-                      {talent.stelle} {talent.stelle === 1 ? "Star" : "Stars"}
-                    </span>
+                  <div className="text-xs text-muted-foreground dark:text-slate-400">
+                    <span className="inline-flex items-center gap-1">
+                      {talent.genere === "forza" && <Sword className="h-3 w-3 text-chart-1" />}
+                      {talent.genere === "intelletto" && <BookOpen className="h-3 w-3 text-chart-2" />}
+                      {talent.genere === "comando" && <Handshake className="h-3 w-3 text-chart-3" />}
+                      {talent.genere === "carisma" && <Flag className="h-3 w-3 text-chart-4" />}
+                      <span className="capitalize">{talent.genere}</span>
+                    </span> •
+                    <span> +{talent.buff}% ({talent.stelle}★ × {talent.livello}) • </span>
+                    <span>Level {talent.livello}</span>
                   </div>
                 </div>
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeTalent(index)}>
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
+                <div className="flex gap-1">
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => {
+                      setNewTalent(talent);
+                      setShowTalentForm(true);
+                    }}
+                    className="h-7 w-7"
+                  >
+                    <Pencil className="h-4 w-4 text-blue-500" />
+                  </Button>
+                  <Button type="button" variant="ghost" size="icon" onClick={() => removeTalent(index)} className="h-7 w-7">
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
+                </div>
               </div>
             ))}
 

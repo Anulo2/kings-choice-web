@@ -1,9 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { KnightsDashboard } from "@/components/knights-dashboard"
 import { useKnightsStore } from "@/lib/store"
-import { initialData } from "@/lib/initial-data"
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -12,16 +11,47 @@ export const Route = createFileRoute('/')({
 export default function Home() {
   const { knights, loadKnights } = useKnightsStore()
 
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   useEffect(() => {
-    // Load knights from store or initialize with sample data
+    // Load knights from store or initialize with sample data from JSON file
     if ((!knights || knights.length === 0)) {
-      loadKnights(initialData.cavalieri)
-      console.log("Loading initial knights data")
+      setIsLoading(true)
+      setError(null)
+      
+      // Use relative path to access the JSON in public folder
+      fetch('./initial-data.json')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load initial data')
+          }
+          return response.json()
+        })
+        .then(data => {
+          loadKnights(data.cavalieri)
+          console.log("Initial knights data loaded from JSON")
+        })
+        .catch(err => {
+          console.error("Error loading initial data:", err)
+          setError("Failed to load initial data. Please try again later.")
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
     }
   }, [knights, loadKnights])
 
+  if (isLoading) {
+    return <p className="text-center text-muted-foreground">Loading knights data...</p>
+  }
+  
+  if (error) {
+    return <p className="text-center text-destructive">{error}</p>
+  }
+  
   if (!knights) {
-    return <p className="text-center text-muted-foreground">Loading knights...</p>
+    return <p className="text-center text-muted-foreground">No knights data available</p>
   }
 
   return (

@@ -7,12 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
-import { Sword, Brain, CommandIcon, Heart, Award, Plus, User, Pencil } from 'lucide-react'
+import { Sword, BookOpen, Handshake, Flag, Award, Plus, User, Pencil } from 'lucide-react'
 import { KnightProgressForm } from "@/components/knight-progress-form"
 import { KnightProfileEdit } from "@/components/knight-profile-edit"
-import { AttributeProficiencyIcon } from "@/components/attribute-proficiency-icon"
 import { useKnightsStore } from "@/lib/store"
-import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 interface KnightDetailsProps {
@@ -28,9 +26,9 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
   
   const attributeIcons = {
     forza: <Sword className="h-5 w-5" />,
-    intelletto: <Brain className="h-5 w-5" />,
-    comando: <CommandIcon className="h-5 w-5" />,
-    carisma: <Heart className="h-5 w-5" />,
+    intelletto: <BookOpen className="h-5 w-5" />,
+    comando: <Handshake className="h-5 w-5" />,
+    carisma: <Flag className="h-5 w-5" />,
   }
   
   const attributeColors = {
@@ -49,7 +47,7 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
     setIsAddingProgress(false)
   }
   
-  const handleSaveProfile = (profileData: { foto?: string; attributiProficienti: string[] }) => {
+  const handleSaveProfile = (profileData: { foto?: string; attributiProficienti: ("forza" | "intelletto" | "comando" | "carisma")[] }) => {
     const updatedKnight = {
       ...knight,
       foto: profileData.foto,
@@ -150,7 +148,6 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
                 <h3 className="font-bold text-xl">{knight.nome}</h3>
                 {knight.attributiProficienti?.length > 0 && (
                   <div className="flex items-center gap-3 mt-2">
-                    <AttributeProficiencyIcon attributes={knight.attributiProficienti} size="md" />
                     <div className="flex flex-wrap gap-1">
                       {knight.attributiProficienti.map((attr) => (
                         <Badge key={attr} variant="outline" className={`${attributeColors[attr]} border-${attributeColors[attr].replace('text-', '')}/30`}>
@@ -174,7 +171,7 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
             <CardContent>
               <div className="space-y-4">
                 {Object.entries(latestProgress.attributi_totale).map(([key, value]) => {
-                  const isProficient = knight.attributiProficienti?.includes(key);
+                  const isProficient = knight.attributiProficienti?.includes(key as "forza" | "intelletto" | "comando" | "carisma");
                   return (
                     <div key={key} className="space-y-1">
                       <div className="flex justify-between">
@@ -295,6 +292,7 @@ export function KnightDetails({ knight }: KnightDetailsProps) {
 }
 
 function TalentCard({ talent }: { talent: Talent }) {
+  // Fix for stars display in TalentCard to match the 6-star maximum
   const typeColorMap = {
     forza: {
       bgGradient: "from-chart-1/20 to-chart-1/5",
@@ -367,7 +365,7 @@ function TalentCard({ talent }: { talent: Talent }) {
           {Array.from({ length: talent.stelle }).map((_, i) => (
             <Award key={`${talent.nome}-star-${i}`} className="h-4 w-4 text-primary" />
           ))}
-          {Array.from({ length: 5 - talent.stelle }).map((_, i) => (
+          {Array.from({ length: 6 - talent.stelle }).map((_, i) => (
             <Award key={`${talent.nome}-empty-${i}`} className="h-4 w-4 text-muted" />
           ))}
         </div>

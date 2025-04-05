@@ -1,0 +1,413 @@
+{
+  "characters": [
+    {
+      "name": "Greg",
+      "stars": 3,
+      "proficiency": ["strength", "intelligence", "command", "charisma"],
+      "points": [
+        {
+          "level": 1,
+          "upgradeCost": 102,
+          "baseAttributes": {
+            "strength": 40,
+            "intelligence": 40,
+            "command": 40,
+            "charisma": 40
+          },
+          "bookBonus": {
+            "strength": 0,
+            "intelligence": 0,
+            "command": 0,
+            "charisma": 0
+          },
+          "loverBonus": {
+            "strength": 0,
+            "intelligence": 0,
+            "command": 0,
+            "charisma": 0
+          },
+          "talents": [
+            {
+              "name": "Ruggito del Drago",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Forza"
+            },
+            {
+              "name": "Vendicatore Determinato",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Forza"
+            },
+            {
+              "name": "Memoria Ripristinata",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Intelligenza"
+            },
+            {
+              "name": "Leggi del Karma",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Intelligenza"
+            },
+            {
+              "name": "Pugno di Ferro",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Comando"
+            },
+            {
+              "name": "Pesatura degli Interessi",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Comando"
+            },
+            {
+              "name": "Ultimo Ballo",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Carisma"
+            },
+            {
+              "name": "Capitolo Vittoria",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Carisma"
+            }
+          ],
+          "abilities": [
+            {
+              "name": "Picchiatore Duro",
+              "upgradeCost": 3,
+              "level": 1
+            },
+            {
+              "name": "Verdetto Equo",
+              "upgradeCost": 3,
+              "level": 1
+            },
+            {
+              "name": "Nobile Etichetta",
+              "upgradeCost": 103,
+              "level": 1
+            },
+            {
+              "name": "Lama Impavida",
+              "upgradeCost": 103,
+              "level": 1
+            }
+          ],
+          "totalAttributes": 160,
+          "power": 80
+        },
+        {
+          "level": 2,
+          "upgradeCost": 162,
+          "baseAttributes": {
+            "strength": 41,
+            "intelligence": 41,
+            "command": 41,
+            "charisma": 41
+          },
+          "bookBonus": {
+            "strength": 0,
+            "intelligence": 0,
+            "command": 0,
+            "charisma": 0
+          },
+          "loverBonus": {
+            "strength": 0,
+            "intelligence": 0,
+            "command": 0,
+            "charisma": 0
+          },
+          "talents": [
+            {
+              "name": "Ruggito del Drago",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Forza"
+            },
+            {
+              "name": "Vendicatore Determinato",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Forza"
+            },
+            {
+              "name": "Memoria Ripristinata",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Intelligenza"
+            },
+            {
+              "name": "Leggi del Karma",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Intelligenza"
+            },
+            {
+              "name": "Pugno di Ferro",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Comando"
+            },
+            {
+              "name": "Pesatura degli Interessi",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Comando"
+            },
+            {
+              "name": "Ultimo Ballo",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Carisma"
+            },
+            {
+              "name": "Capitolo Vittoria",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Carisma"
+            }
+          ],
+          "abilities": [
+            {
+              "name": "Picchiatore Duro",
+              "upgradeCost": 3,
+              "level": 1
+            },
+            {
+              "name": "Verdetto Equo",
+              "upgradeCost": 3,
+              "level": 1
+            },
+            {
+              "name": "Nobile Etichetta",
+              "upgradeCost": 103,
+              "level": 1
+            },
+            {
+              "name": "Lama Impavida",
+              "upgradeCost": 103,
+              "level": 1
+            }
+          ],
+          "totalAttributes": 164,
+          "power": 160
+        },
+        {
+          "level": 3,
+          "upgradeCost": 231,
+          "baseAttributes": {
+            "strength": 44,
+            "intelligence": 44,
+            "command": 44,
+            "charisma": 44
+          },
+          "bookBonus": {
+            "strength": 0,
+            "intelligence": 0,
+            "command": 0,
+            "charisma": 0
+          },
+          "loverBonus": {
+            "strength": 0,
+            "intelligence": 0,
+            "command": 0,
+            "charisma": 0
+          },
+          "talents": [
+            {
+              "name": "Ruggito del Drago",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Forza"
+            },
+            {
+              "name": "Vendicatore Determinato",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Forza"
+            },
+            {
+              "name": "Memoria Ripristinata",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Intelligenza"
+            },
+            {
+              "name": "Leggi del Karma",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Intelligenza"
+            },
+            {
+              "name": "Pugno di Ferro",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Comando"
+            },
+            {
+              "name": "Pesatura degli Interessi",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Comando"
+            },
+            {
+              "name": "Ultimo Ballo",
+              "upgradeCost": 600,
+              "level": 1,
+              "stars": 3,
+              "type": "Carisma"
+            },
+            {
+              "name": "Capitolo Vittoria",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Carisma"
+            }
+          ],
+          "abilities": [
+            {
+              "name": "Picchiatore Duro",
+              "upgradeCost": 3,
+              "level": 1
+            },
+            {
+              "name": "Verdetto Equo",
+              "upgradeCost": 3,
+              "level": 1
+            },
+            {
+              "name": "Nobile Etichetta",
+              "upgradeCost": 103,
+              "level": 1
+            },
+            {
+              "name": "Lama Impavida",
+              "upgradeCost": 103,
+              "level": 1
+            }
+          ],
+          "totalAttributes": 176,
+          "power": 240
+        }
+      ]
+    },
+    {
+      "name": "Talbot",
+      "stars": 2,
+      "proficiency": ["strength"],
+      "points": [
+        {
+          "level": 1,
+          "upgradeCost": 102,
+          "baseAttributes": {
+            "strength": 60,
+            "intelligence": 10,
+            "command": 10,
+            "charisma": 20
+          },
+          "bookBonus": {
+            "strength": 0,
+            "intelligence": 0,
+            "command": 0,
+            "charisma": 0
+          },
+          "loverBonus": {
+            "strength": 0,
+            "intelligence": 0,
+            "command": 0,
+            "charisma": 0
+          },
+          "talents": [
+            {
+              "name": "Tempesta Violenta",
+              "upgradeCost": 800,
+              "level": 1,
+              "stars": 4,
+              "type": "Forza"
+            },
+            {
+              "name": "Cuore d'Acciaio",
+              "upgradeCost": 400,
+              "level": 1,
+              "stars": 2,
+              "type": "Forza"
+            },
+            {
+              "name": "Leggi del Karma",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Intelligenza"
+            },
+            {
+              "name": "Pesatura degli Interessi",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Comando"
+            },
+            {
+              "name": "La Pleiade",
+              "upgradeCost": 200,
+              "level": 1,
+              "stars": 1,
+              "type": "Carisma"
+            }
+          ],
+          "abilities": [
+            {
+              "name": "Picchiatore Duro",
+              "upgradeCost": 3,
+              "level": 1
+            },
+            {
+              "name": "Verdetto Equo",
+              "upgradeCost": 3,
+              "level": 1
+            },
+            {
+              "name": "Nobile Etichetta",
+              "upgradeCost": 103,
+              "level": 1
+            },
+            {
+              "name": "Lama Impavida",
+              "upgradeCost": 103,
+              "level": 1
+            }
+          ],
+          "totalAttributes": 100,
+          "power": 120
+        }
+      ]
+    }
+  ]
+}

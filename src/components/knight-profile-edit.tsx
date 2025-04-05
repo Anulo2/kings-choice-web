@@ -4,7 +4,7 @@ import { useState } from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Sword, Brain, CommandIcon, Heart } from 'lucide-react'
+import { Sword, BookOpen, Handshake, Flag } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -25,7 +25,7 @@ type KnightProfileFormValues = z.infer<typeof formSchema>
 
 interface KnightProfileEditProps {
   knight: Knight
-  onSave: (values: { foto?: string; attributiProficienti: string[] }) => void
+  onSave: (values: { foto?: string; attributiProficienti: ("forza" | "intelletto" | "comando" | "carisma")[] }) => void
   onCancel: () => void
 }
 
@@ -40,9 +40,9 @@ export function KnightProfileEdit({ knight, onSave, onCancel }: KnightProfileEdi
   
   const attributeIcons = {
     forza: <Sword className="h-5 w-5" />,
-    intelletto: <Brain className="h-5 w-5" />,
-    comando: <CommandIcon className="h-5 w-5" />,
-    carisma: <Heart className="h-5 w-5" />,
+    intelletto: <BookOpen className="h-5 w-5" />,
+    comando: <Handshake className="h-5 w-5" />,
+    carisma: <Flag className="h-5 w-5" />,
   }
   
   const attributeColors = {

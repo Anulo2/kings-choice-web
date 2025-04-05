@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { Sword, Brain, CommandIcon, Heart } from "lucide-react"
+import { Sword, BookOpen, Handshake, Flag, SquareAsterisk } from "lucide-react"
 
 type AttributeType = "forza" | "intelletto" | "comando" | "carisma"
 
@@ -24,9 +24,9 @@ export function AttributeProficiencyIcon({
   
   const attributeIcons = {
     forza: <Sword className={sizeClasses[size]} />,
-    intelletto: <Brain className={sizeClasses[size]} />,
-    comando: <CommandIcon className={sizeClasses[size]} />,
-    carisma: <Heart className={sizeClasses[size]} />
+    intelletto: <BookOpen className={sizeClasses[size]} />,
+    comando: <Handshake className={sizeClasses[size]} />,
+    carisma: <Flag className={sizeClasses[size]} />
   }
   
   const attributeColors = {
@@ -43,32 +43,15 @@ export function AttributeProficiencyIcon({
     return null
   }
   
-  // Special case: All 4 attributes - create diamond icon
+  // Special case: All 4 attributes - use square-asterisk icon
   if (uniqueAttributes.length === 4) {
     return (
-      <div className={cn("relative", className)} style={{ width: sizeClasses[size].split(" ")[1], height: sizeClasses[size].split(" ")[1] }}>
-        {/* Diamond shape divided into 4 quadrants */}
-        <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
-          {/* Top left - Strength */}
-          <div className="overflow-hidden flex items-end justify-end border-r border-background">
-            <Sword className={cn(sizeClasses[size], attributeColors.forza, "transform translate-x-1/4 translate-y-1/4 scale-75")} />
-          </div>
-          
-          {/* Top right - Intellect */}
-          <div className="overflow-hidden flex items-end justify-start border-l border-background">
-            <Brain className={cn(sizeClasses[size], attributeColors.intelletto, "transform -translate-x-1/4 translate-y-1/4 scale-75")} />
-          </div>
-          
-          {/* Bottom left - Command */}
-          <div className="overflow-hidden flex items-start justify-end border-r border-background">
-            <CommandIcon className={cn(sizeClasses[size], attributeColors.comando, "transform translate-x-1/4 -translate-y-1/4 scale-75")} />
-          </div>
-          
-          {/* Bottom right - Charisma */}
-          <div className="overflow-hidden flex items-start justify-start border-l border-background">
-            <Heart className={cn(sizeClasses[size], attributeColors.carisma, "transform -translate-x-1/4 -translate-y-1/4 scale-75")} />
-          </div>
-        </div>
+      <div className={cn("relative flex items-center justify-center", className)}>
+        <SquareAsterisk className={cn(
+          sizeClasses[size], 
+          "text-primary font-bold",
+          className
+        )} />
       </div>
     )
   }

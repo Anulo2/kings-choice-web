@@ -44,6 +44,12 @@ export interface Knight {
       comando: number
       carisma: number
     }
+    aura_buff: {
+      forza: number
+      intelletto: number
+      comando: number
+      carisma: number
+    }
     buff_cavalcatura: number
     attributi_totali: number
     potenza: number

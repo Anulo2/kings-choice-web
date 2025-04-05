@@ -10,12 +10,13 @@ import { useKnightsStore } from "@/lib/store"
 import type { Knight, Talent } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PlusCircle, Trash2, User } from "lucide-react"
+import { PlusCircle, Trash2 } from "lucide-react"
 import { useState } from "react"
-import { Sword, Brain, CommandIcon, Heart } from 'lucide-react'
+import { Sword, BookOpen, Handshake, Flag } from 'lucide-react'
 import { Checkbox } from "@/components/ui/checkbox"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { AttributeProficiencyIcon } from "@/components/attribute-proficiency-icon"
+import { cn } from "@/lib/utils"
 
 const attributesSchema = z.object({
   forza: z.coerce.number().min(0, { message: "Must be a positive number" }),
@@ -27,15 +28,14 @@ const attributesSchema = z.object({
 const talentSchema = z.object({
   nome: z.string().min(1, { message: "Name is required" }),
   genere: z.string().min(1, { message: "Type is required" }),
-  buff: z.coerce.number().min(0, { message: "Must be a positive number" }),
   livello: z.coerce.number().min(1, { message: "Level must be at least 1" }),
-  stelle: z.coerce.number().min(1).max(5, { message: "Stars must be between 1 and 5" }),
+  stelle: z.coerce.number().min(1).max(6, { message: "Stars must be between 1 and 6" }),
 })
 
 const formSchema = z.object({
   nome: z.string().min(2, { message: "Name must be at least 2 characters" }),
   livello: z.coerce.number().min(1, { message: "Level must be at least 1" }),
-  rango: z.coerce.number().min(1).max(5, { message: "Rank must be between 1 and 5" }),
+  rango: z.coerce.number().min(1).max(6, { message: "Rank must be between 1 and 6" }),
   attributiProficienti: z.array(z.enum(["forza", "intelletto", "comando", "carisma"])).min(1, {
     message: "Select at least one proficient attribute"
   }),
@@ -45,6 +45,7 @@ const formSchema = z.object({
   buff_negoziazione: attributesSchema,
   bonus_libro: attributesSchema,
   bonus_amante: attributesSchema,
+  aura_buff: attributesSchema,
   buff_cavalcatura: z.coerce.number().min(0, { message: "Must be a positive number" }),
   potenza: z.coerce.number().min(0, { message: "Power must be a positive number" }),
 })
@@ -97,6 +98,12 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
         comando: 0,
         carisma: 0,
       },
+      aura_buff: {
+        forza: 0,
+        intelletto: 0,
+        comando: 0,
+        carisma: 0,
+      },
       buff_cavalcatura: 0,
       potenza: 0,
     },
@@ -107,7 +114,6 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
     defaultValues: {
       nome: "",
       genere: "",
-      buff: 0,
       livello: 1,
       stelle: 1,
     },
@@ -121,7 +127,13 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
       return;
     }
     
-    setTalents([...talents, talentData]);
+    // Calculate buff as stars * level
+    const newTalent = {
+      ...talentData,
+      buff: talentData.stelle * talentData.livello
+    };
+    
+    setTalents([...talents, newTalent]);
     talentForm.reset();
   }
 
@@ -133,9 +145,9 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
 
   const attributeIcons = {
     forza: <Sword className="h-5 w-5" />,
-    intelletto: <Brain className="h-5 w-5" />,
-    comando: <CommandIcon className="h-5 w-5" />,
-    carisma: <Heart className="h-5 w-5" />,
+    intelletto: <BookOpen className="h-5 w-5" />,
+    comando: <Handshake className="h-5 w-5" />,
+    carisma: <Flag className="h-5 w-5" />,
   }
   
   const attributeColors = {
@@ -171,6 +183,7 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
           buff_negoziazione: values.buff_negoziazione,
           bonus_libro: values.bonus_libro,
           bonus_amante: values.bonus_amante,
+          aura_buff: values.aura_buff,
           buff_cavalcatura: values.buff_cavalcatura,
           attributi_totali,
           potenza: values.potenza,
@@ -332,7 +345,7 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
                                     <SelectValue placeholder="Select rank" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {[1, 2, 3, 4, 5].map((rank) => (
+                                    {[1, 2, 3, 4, 5, 6].map((rank) => (
                                       <SelectItem key={rank} value={rank.toString()}>
                                         Rank {rank}
                                       </SelectItem>
@@ -522,6 +535,15 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
                   </CardContent>
                 </Card>
 
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Aura Buff</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <AttributesFields basePath="aura_buff" />
+                  </CardContent>
+                </Card>
+
                 <div className="flex justify-between gap-2">
                   <Button type="button" variant="outline" onClick={() => setActiveTab("basic")}>
                     Previous
@@ -569,11 +591,23 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
                                       <SelectValue placeholder="Select type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      <SelectItem value="strength">Strength</SelectItem>
-                                      <SelectItem value="intellect">Intellect</SelectItem>
-                                      <SelectItem value="command">Command</SelectItem>
-                                      <SelectItem value="charisma">Charisma</SelectItem>
-                                      <SelectItem value="other">Other</SelectItem>
+                                      <SelectItem value="strength" className="flex items-center gap-2">
+                                        <Sword className="h-4 w-4 text-chart-1" />
+                                        <span>Strength</span>
+                                      </SelectItem>
+                                      <SelectItem value="intellect" className="flex items-center gap-2">
+                                        <BookOpen className="h-4 w-4 text-chart-2" />
+                                        <span>Intellect</span>
+                                      </SelectItem>
+                                      <SelectItem value="command" className="flex items-center gap-2">
+                                        <Handshake className="h-4 w-4 text-chart-3" />
+                                        <span>Command</span>
+                                      </SelectItem>
+                                      <SelectItem value="charisma" className="flex items-center gap-2">
+                                        <Flag className="h-4 w-4 text-chart-4" />
+                                        <span>Charisma</span>
+                                      </SelectItem>
+
                                     </SelectContent>
                                   </Select>
                                 </FormControl>
@@ -583,20 +617,7 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
                           />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <FormField
-                            control={talentForm.control}
-                            name="buff"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Buff Value</FormLabel>
-                                <FormControl>
-                                  <Input type="number" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                           <FormField
                             control={talentForm.control}
@@ -627,7 +648,7 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
                                       <SelectValue placeholder="Stars" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      {[1, 2, 3, 4, 5].map((stars) => (
+                                      {[1, 2, 3, 4, 5, 6].map((stars) => (
                                         <SelectItem key={stars} value={stars.toString()}>
                                           {stars} ⭐
                                         </SelectItem>
@@ -670,10 +691,18 @@ export function KnightForm({ onCancel, onComplete }: KnightFormProps) {
                           {talents.map((talent, index) => (
                             <tr key={index} className="border-t">
                               <td className="p-2">{talent.nome}</td>
-                              <td className="p-2">{talent.genere}</td>
+                              <td className="p-2">
+                                <div className="flex items-center gap-1">
+                                  {talent.genere === "strength" && <Sword className="h-4 w-4 text-chart-1" />}
+                                  {talent.genere === "intellect" && <BookOpen className="h-4 w-4 text-chart-2" />}
+                                  {talent.genere === "command" && <Handshake className="h-4 w-4 text-chart-3" />}
+                                  {talent.genere === "charisma" && <Flag className="h-4 w-4 text-chart-4" />}
+                                  <span className="capitalize">{talent.genere}</span>
+                                </div>
+                              </td>
                               <td className="p-2">{talent.livello}</td>
                               <td className="p-2">{"⭐".repeat(talent.stelle)}</td>
-                              <td className="p-2">{talent.buff}</td>
+                              <td className="p-2">{talent.buff} <span className="text-xs text-muted-foreground">({talent.stelle}★ × {talent.livello})</span></td>
                               <td className="p-2">
                                 <Button
                                   variant="ghost"

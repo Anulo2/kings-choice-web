@@ -1,6 +1,6 @@
 import type { Knight } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { Shield, Trash2, Sword, Brain, CommandIcon, Heart, User } from 'lucide-react'
+import { Shield, Trash2, Sword, BookOpen, Handshake, Flag, User } from 'lucide-react'
 import { Button } from "./ui/button"
 import { useKnightsStore } from "@/lib/store"
 import { 
@@ -30,9 +30,9 @@ export function KnightsList({ knights, selectedKnightId, onSelectKnight }: Knigh
   
   const attributeIcons = {
     forza: <Sword className="h-3 w-3" />,
-    intelletto: <Brain className="h-3 w-3" />,
-    comando: <CommandIcon className="h-3 w-3" />,
-    carisma: <Heart className="h-3 w-3" />,
+    intelletto: <BookOpen className="h-3 w-3" />,
+    comando: <Handshake className="h-3 w-3" />,
+    carisma: <Flag className="h-3 w-3" />,
   }
   
   const attributeColors = {
