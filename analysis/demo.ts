@@ -1,101 +1,115 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 import {
-  CharacterData,
-  calculateUpgradeCosts,
+  type CharacterData,
   calculatePower,
-  projectCharacterStats,
-  analyzePowerGrowth,
-  generateUpgradePlan
-} from './upgrade-analyzer';
+  generateUpgradePlan,
+  projectCharacterStats
+} from './index';
 
-// Simple function to load character data from JSON file
-function loadCharacterData(filePath: string): CharacterData {
-  const fileContents = readFileSync(filePath, 'utf8');
-  const data = JSON.parse(fileContents);
-  return data.character as CharacterData;
+// Funzione per caricare i dati del cavaliere da un file JSON
+function loadCharacterData(filePath: string): CharacterData[] {
+  try {
+    const fileContents = readFileSync(filePath, 'utf8');
+    const data = JSON.parse(fileContents);
+    return data.characters;
+  } catch (error) {
+    console.error(`Errore nel caricamento dei dati: ${error}`);
+    process.exit(1);
+  }
 }
 
-// Main function to analyze knight upgrades
-function analyzeKnightUpgrades(dataFilePath: string, currentLevel: number, targetLevel: number): void {
-  // Load character data
-  const character = loadCharacterData(dataFilePath);
+// Funzione principale per l'analisi del cavaliere
+function analyzeKnight(
+  dataFilePath: string = './data.json', 
+  knightIndex: number = 0,
+  currentLevel: number = 1, 
+  targetLevel: number = 5
+): void {
+  // Carica i dati del cavaliere
+  const characters = loadCharacterData(dataFilePath);
   
-  console.log(`\n===== Knight Upgrade Analysis for ${character.name} =====\n`);
-  console.log(`Current Level: ${currentLevel}`);
-  console.log(`Target Level: ${targetLevel}`);
+  if (knightIndex >= characters.length) {
+    console.error(`Indice cavaliere non valido. Ci sono solo ${characters.length} cavalieri disponibili.`);
+    return;
+  }
   
-  // Generate upgrade plan
+  const character = characters[knightIndex];
+  
+  console.log(`\n========== Analisi Cavaliere: ${character.name} ==========\n`);
+  console.log(`Stelle: ${character.stars}★`);
+  console.log(`Proficienza: ${character.proficiency.join(', ')}`);
+  
   try {
-    const plan = generateUpgradePlan(character, currentLevel, targetLevel);
-    
-    // Display current stats
-    console.log(`\n----- Current Stats (Level ${currentLevel}) -----`);
-    console.log(`Power: ${plan.currentStats.power}`);
-    console.log('Attributes:');
-    console.log(`  Strength: ${plan.currentStats.attributes.strength}`);
-    console.log(`  Intelligence: ${plan.currentStats.attributes.intelligence}`);
-    console.log(`  Command: ${plan.currentStats.attributes.command}`);
-    console.log(`  Charisma: ${plan.currentStats.attributes.charisma}`);
-    
-    // Display projected stats
-    console.log(`\n----- Projected Stats (Level ${targetLevel}) -----`);
-    console.log(`Power: ${plan.targetStats.power}`);
-    console.log('Attributes:');
-    console.log(`  Strength: ${plan.targetStats.attributes.strength}`);
-    console.log(`  Intelligence: ${plan.targetStats.attributes.intelligence}`);
-    console.log(`  Command: ${plan.targetStats.attributes.command}`);
-    console.log(`  Charisma: ${plan.targetStats.attributes.charisma}`);
-    
-    // Display upgrade costs
-    console.log('\n----- Upgrade Costs -----');
-    console.log(`Silver needed: ${plan.upgradeCosts.totalSilver}`);
-    console.log(`Talent EXP needed: ${plan.upgradeCosts.totalExp}`);
-    console.log(`Ability points needed: ${plan.upgradeCosts.totalAbilityPoints}`);
-    
-    // Display level by level progression
-    console.log('\n----- Level Progression -----');
-    for (const projection of plan.projectedStats) {
-      console.log(`Level ${projection.level}:`);
-      console.log(`  Power: ${projection.power}`);
-      console.log(`  Upgrade Cost: ${projection.upgradeCost} silver`);
-      console.log(`  Total Attributes: ${projection.totalAttributes}`);
-      console.log(`  Strength: ${projection.attributes.strength}, Intelligence: ${projection.attributes.intelligence}`);
-      console.log(`  Command: ${projection.attributes.command}, Charisma: ${projection.attributes.charisma}`);
-      console.log('-----------------------------------------');
+    // Trova il punto dati per il livello attuale
+    const currentPoint = character.points.find(p => p.level === currentLevel);
+    if (!currentPoint) {
+      console.error(`Dati per il livello ${currentLevel} non trovati.`);
+      return;
     }
     
-    // Display recommendations
-    console.log('\n----- Recommendations -----');
+    // Calcola la potenza con la nuova formula
+    const powerCalc = calculatePower(
+      currentPoint.baseAttributes.strength, 
+      currentPoint.talents
+    );
+    
+    console.log(`\n----- Statistiche Attuali (Livello ${currentLevel}) -----`);
+    console.log(`Potenza: ${powerCalc.total}`);
+    console.log(`Dettaglio Potenza:`);
+    console.log(`- Da Forza Base: ${powerCalc.fromStrengthAttribute}`);
+    console.log(`- Da Talenti Forza: ${powerCalc.fromStrengthTalents}`);
+    
+    console.log('\nAttributi Base:');
+    console.log(`- Forza: ${currentPoint.baseAttributes.strength}`);
+    console.log(`- Intelligenza: ${currentPoint.baseAttributes.intelligence}`);
+    console.log(`- Comando: ${currentPoint.baseAttributes.command}`);
+    console.log(`- Carisma: ${currentPoint.baseAttributes.charisma}`);
+    
+    // Genera un piano di aggiornamento
+    const plan = generateUpgradePlan(character, currentLevel, targetLevel);
+    
+    console.log(`\n----- Piano di Aggiornamento al Livello ${targetLevel} -----`);
+    
+    // Mostra statistiche proiettate
+    console.log('\nProiezione Livelli:');
+    for (const projection of plan.projectedStats) {
+      console.log(`\nLivello ${projection.level}:`);
+      console.log(`- Potenza: ${projection.power}`);
+      console.log(`- Costo: ${projection.upgradeCost} argento`);
+      console.log(`- Attributi Totali: ${projection.totalAttributes}`);
+    }
+    
+    // Mostra consigli
+    console.log('\nConsigli:');
     for (const recommendation of plan.recommendations) {
       console.log(`- ${recommendation}`);
     }
     
-    // Display power growth analysis
-    console.log('\n----- Power Growth Analysis -----');
-    const analysis = analyzePowerGrowth(character);
-    for (const observation of analysis.observations) {
-      console.log(`- ${observation}`);
-    }
+    // Mostra costi totali
+    console.log('\nCosti di Aggiornamento:');
+    console.log(`- Argento Necessario: ${plan.upgradeCosts.totalSilver}`);
+    console.log(`- EXP Talento Necessaria: ${plan.upgradeCosts.totalExp}`);
+    console.log(`- Punti Abilità Necessari: ${plan.upgradeCosts.totalAbilityPoints}`);
     
   } catch (error) {
     if (error instanceof Error) {
-      console.error(`Error: ${error.message}`);
+      console.error(`Errore: ${error.message}`);
     } else {
-      console.error('An unknown error occurred');
+      console.error('Si è verificato un errore sconosciuto');
     }
   }
 }
 
-// Run the analysis with command line arguments
-// Usage: ts-node demo.ts ./data.json 3 5
+// Permetti di eseguire lo script dalla linea di comando
 if (require.main === module) {
   const args = process.argv.slice(2);
   const dataFilePath = args[0] || './data.json';
-  const currentLevel = parseInt(args[1] || '3', 10);
-  const targetLevel = parseInt(args[2] || '5', 10);
+  const knightIndex = parseInt(args[1] || '0', 10);
+  const currentLevel = parseInt(args[2] || '1', 10);
+  const targetLevel = parseInt(args[3] || '5', 10);
   
-  analyzeKnightUpgrades(dataFilePath, currentLevel, targetLevel);
+  analyzeKnight(dataFilePath, knightIndex, currentLevel, targetLevel);
 }
 
-// Export the analysis function for potential reuse
-export { analyzeKnightUpgrades };
+// Esporta la funzione per un potenziale riutilizzo
+export { analyzeKnight };

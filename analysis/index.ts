@@ -1,4 +1,4 @@
-// Types definitions
+// Definizioni dei tipi
 export interface AttributeBonus {
   strength: number;
   intelligence: number;
@@ -64,7 +64,6 @@ export interface UpgradeCosts {
 
 export interface PowerCalculation {
   baseValue: number;
-  fromLevel: number;
   fromStrengthAttribute: number;
   fromStrengthTalents: number;
   total: number;
@@ -78,58 +77,91 @@ export interface ProjectedStats {
   power: number;
 }
 
-// Constants for calculations
-const BASE_POWER_FACTOR = 80; // Power increase per level observed in data
-const ATTRIBUTE_GROWTH_PER_LEVEL = 1.5; // Average attribute growth per level
+/**
+ * Calcola il costo di aggiornamento del livello
+ */
+export function calculateLevelUpgradeCostGrowthRate(points: CharacterPoint[]): number {
+  if (points.length < 2) {
+    return 1.5; // Tasso di crescita predefinito se non ci sono abbastanza dati
+  }
+
+  // Calcola il tasso di crescita medio
+  let totalGrowth = 0;
+  for (let i = 1; i < points.length; i++) {
+    const currentCost = points[i].upgradeCost;
+    const previousCost = points[i-1].upgradeCost;
+    totalGrowth += currentCost / previousCost;
+  }
+  
+  return totalGrowth / (points.length - 1);
+}
 
 /**
- * Calculate detailed upgrade costs for reaching a target level
+ * Predice il costo di aggiornamento per un livello specifico
  */
-function calculateUpgradeCosts(
+export function predictLevelUpgradeCost(
+  level: number, 
+  growthRate: number, 
+  points: CharacterPoint[]
+): number {
+  // Trova il livello più alto nei nostri dati
+  const highestDataPoint = points.reduce(
+    (max, point) => point.level > max.level ? point : max,
+    points[0]
+  );
+
+  // Predizione basata sul costo del livello più alto
+  return Math.round(highestDataPoint.upgradeCost * growthRate ** (level - highestDataPoint.level));
+}
+
+/**
+ * Calcola i costi dettagliati di aggiornamento per raggiungere un livello target
+ */
+export function calculateUpgradeCosts(
   currentLevel: number,
   targetLevel: number,
   character: CharacterData
 ): UpgradeCosts {
   if (targetLevel <= currentLevel) {
-    throw new Error("Target level must be greater than current level");
+    throw new Error("Il livello target deve essere maggiore del livello attuale");
   }
 
-  // Find the current and target level points
+  // Trova i dati del punto attuale
   const currentPoint = character.points.find(p => p.level === currentLevel);
   if (!currentPoint) {
-    throw new Error(`Data for current level ${currentLevel} not found`);
+    throw new Error(`Dati per il livello attuale ${currentLevel} non trovati`);
   }
 
-  // Predict costs for future levels based on growth pattern
+  // Predici i costi per i livelli futuri in base al modello di crescita
   let totalSilver = 0;
   const levelCosts: number[] = [];
 
-  // Calculate growth rate for level upgrade costs
+  // Calcola il tasso di crescita per i costi di aggiornamento
   const growthRate = calculateLevelUpgradeCostGrowthRate(character.points);
 
-  // Calculate level upgrade costs
+  // Calcola i costi di aggiornamento del livello
   for (let level = currentLevel; level < targetLevel; level++) {
     const pointData = character.points.find(p => p.level === level);
     
     if (pointData) {
-      // Use actual cost if available
+      // Usa il costo effettivo se disponibile
       levelCosts.push(pointData.upgradeCost);
       totalSilver += pointData.upgradeCost;
     } else {
-      // Predict cost based on growth pattern
+      // Predice il costo in base al modello di crescita
       const predictedCost = predictLevelUpgradeCost(level, growthRate, character.points);
       levelCosts.push(predictedCost);
       totalSilver += predictedCost;
     }
   }
 
-  // Calculate talent upgrade costs
+  // Calcola i costi di aggiornamento del talento
   const talentUpgrades = currentPoint.talents.map(talent => {
     const currentTalentLevel = talent.level;
-    const targetTalentLevel = currentTalentLevel + 1; // Assuming one level upgrade per talent
+    const targetTalentLevel = currentTalentLevel + 1; // Ipotizzando un aggiornamento di livello per talento
     
-    // Talent cost increases with stars and level
-    const costMultiplier = 1 + (currentTalentLevel * 0.2); // 20% increase per level
+    // Il costo del talento aumenta con le stelle e il livello
+    const costMultiplier = 1 + (currentTalentLevel * 0.2); // Aumento del 20% per livello
     const talentCost = Math.round(talent.upgradeCost * costMultiplier);
     
     return {
@@ -142,13 +174,13 @@ function calculateUpgradeCosts(
     };
   });
 
-  // Calculate ability upgrade costs
+  // Calcola i costi di aggiornamento delle abilità
   const abilityUpgrades = currentPoint.abilities.map(ability => {
     const currentAbilityLevel = ability.level;
-    const targetAbilityLevel = currentAbilityLevel + 1; // Assuming one level upgrade per ability
+    const targetAbilityLevel = currentAbilityLevel + 1; // Ipotizzando un aggiornamento di livello per abilità
     
-    // Ability cost increases with level
-    const costMultiplier = 1 + (currentAbilityLevel * 0.1); // 10% increase per level
+    // Il costo dell'abilità aumenta con il livello
+    const costMultiplier = 1 + (currentAbilityLevel * 0.1); // Aumento del 10% per livello
     const abilityCost = Math.round(ability.upgradeCost * costMultiplier);
     
     return {
@@ -173,73 +205,64 @@ function calculateUpgradeCosts(
 }
 
 /**
- * Calculate the growth rate of level upgrade costs
+ * Calcola gli attributi totali di un personaggio
+ * Attributi totali = Somma di tutti gli attributi base + bonus libro + bonus amante
  */
-function calculateLevelUpgradeCostGrowthRate(points: CharacterPoint[]): number {
-  if (points.length < 2) {
-    return 1.5; // Default growth rate if not enough data
-  }
-
-  // Calculate average growth rate
-  let totalGrowth = 0;
-  for (let i = 1; i < points.length; i++) {
-    const currentCost = points[i].upgradeCost;
-    const previousCost = points[i-1].upgradeCost;
-    totalGrowth += currentCost / previousCost;
-  }
+export function calculateTotalAttributes(point: CharacterPoint): number {
+  // Somma attributi base
+  const baseTotal = 
+    point.baseAttributes.strength +
+    point.baseAttributes.intelligence +
+    point.baseAttributes.command +
+    point.baseAttributes.charisma;
   
-  return totalGrowth / (points.length - 1);
+  // Somma bonus libro
+  const bookTotal = 
+    point.bookBonus.strength +
+    point.bookBonus.intelligence +
+    point.bookBonus.command +
+    point.bookBonus.charisma;
+  
+  // Somma bonus amante
+  const loverTotal = 
+    point.loverBonus.strength +
+    point.loverBonus.intelligence +
+    point.loverBonus.command +
+    point.loverBonus.charisma;
+  
+  // Ritorna la somma di tutti gli attributi
+  return baseTotal + bookTotal + loverTotal;
 }
 
 /**
- * Predict level upgrade cost for a specific level
- */
-function predictLevelUpgradeCost(
-  level: number, 
-  growthRate: number, 
-  points: CharacterPoint[]
-): number {
-  // Find the highest level in our data
-  const highestDataPoint = points.reduce(
-    (max, point) => point.level > max.level ? point : max,
-    points[0]
-  );
-
-  // Base prediction on the highest level's cost
-  return Math.round(highestDataPoint.upgradeCost * growthRate ** (level - highestDataPoint.level));
-}
-
-/**
- * Calculate character power with detailed breakdown
- * According to the formula:
+ * Calcola la potenza del cavaliere con dettaglio
+ * Secondo la formula:
  * Potenza = 0
- * For talento in talenti di tipo forza:
- *     potenza += Stelle talento * livello * 10
+ * Per talento in talenti di tipo forza:
+ *     potenza += Stelle talento * livello talento * 10
  * potenza += attributo base di forza
  */
-function calculatePower(
-  level: number, 
+export function calculatePower(
   strengthAttribute: number, 
   talents: Talent[]
 ): PowerCalculation {
-  // Filter talents that are of type "Forza"
+  // Filtra i talenti di tipo "Forza"
   const strengthTalents = talents.filter(talent => talent.type === "Forza");
 
-  // Calculate talent power contribution: sum(stars * level * 10)
+  // Calcola il contributo dei talenti: somma(stelle * livello * 10)
   const fromStrengthTalents = strengthTalents.reduce(
     (sum, talent) => sum + (talent.stars * talent.level * 10), 
     0
   );
 
-  // Contribution from strength attribute
+  // Contributo dall'attributo forza
   const fromStrengthAttribute = strengthAttribute;
   
-  // Total power calculation
+  // Calcolo totale della potenza
   const total = fromStrengthTalents + fromStrengthAttribute;
 
   return {
-    baseValue: 0, // Updated since we're not using a base factor anymore
-    fromLevel: 0, // Not using level in the new formula
+    baseValue: 0,
     fromStrengthAttribute,
     fromStrengthTalents,
     total: Math.round(total)
@@ -247,27 +270,27 @@ function calculatePower(
 }
 
 /**
- * Project character statistics for future levels
+ * Proietta le statistiche del personaggio per i livelli futuri
  */
-function projectCharacterStats(
+export function projectCharacterStats(
   character: CharacterData, 
   targetLevel: number
 ): ProjectedStats[] {
   const projections: ProjectedStats[] = [];
   
-  // Find the highest level in our data
+  // Trova il livello più alto nei nostri dati
   const highestDataPoint = character.points.reduce(
     (max, point) => point.level > max.level ? point : max,
     character.points[0]
   );
   
-  // Calculate average attribute growth per level
+  // Calcola la crescita media degli attributi per livello
   const lastPoint = highestDataPoint;
   const firstPoint = character.points[0];
   const levelDiff = lastPoint.level - firstPoint.level;
   
   if (levelDiff <= 0) {
-    throw new Error("Not enough data points to calculate growth rate");
+    throw new Error("Non ci sono abbastanza punti dati per calcolare il tasso di crescita");
   }
   
   const attributeGrowthRates = {
@@ -277,12 +300,12 @@ function projectCharacterStats(
     charisma: (lastPoint.baseAttributes.charisma - firstPoint.baseAttributes.charisma) / levelDiff
   };
   
-  // Calculate upgrade cost growth rate
+  // Calcola il tasso di crescita dei costi di aggiornamento
   const costGrowthRate = calculateLevelUpgradeCostGrowthRate(character.points);
 
-  // Generate projections
+  // Genera proiezioni
   for (let level = highestDataPoint.level + 1; level <= targetLevel; level++) {
-    // Project attribute values
+    // Proietta i valori degli attributi
     const projectedAttributes = {
       strength: Math.round(lastPoint.baseAttributes.strength + attributeGrowthRates.strength * (level - lastPoint.level)),
       intelligence: Math.round(lastPoint.baseAttributes.intelligence + attributeGrowthRates.intelligence * (level - lastPoint.level)),
@@ -290,27 +313,27 @@ function projectCharacterStats(
       charisma: Math.round(lastPoint.baseAttributes.charisma + attributeGrowthRates.charisma * (level - lastPoint.level))
     };
     
-    // Assume book and lover bonuses remain constant
+    // Supponi che i bonus del libro e dell'amante rimangano costanti
     const projectedPoint: CharacterPoint = {
       level,
-      upgradeCost: 0, // Will be set below
+      upgradeCost: 0, // Verrà impostato in seguito
       baseAttributes: projectedAttributes,
       bookBonus: lastPoint.bookBonus,
       loverBonus: lastPoint.loverBonus,
       talents: lastPoint.talents,
       abilities: lastPoint.abilities,
-      totalAttributes: 0, // Will be calculated below
-      power: 0 // Will be calculated below
+      totalAttributes: 0, // Verrà calcolato in seguito
+      power: 0 // Verrà calcolato in seguito
     };
     
-    // Calculate total attributes using our new function
+    // Calcola gli attributi totali usando la nostra nuova funzione
     const totalAttributes = calculateTotalAttributes(projectedPoint);
     
-    // Project upgrade cost
+    // Proietta il costo di aggiornamento
     const upgradeCost = predictLevelUpgradeCost(level - 1, costGrowthRate, character.points);
     
-    // Calculate power using the new formula
-    const powerCalc = calculatePower(level, projectedAttributes.strength, lastPoint.talents);
+    // Calcola la potenza usando la nuova formula
+    const powerCalc = calculatePower(projectedAttributes.strength, lastPoint.talents);
     
     projections.push({
       level,
@@ -325,62 +348,9 @@ function projectCharacterStats(
 }
 
 /**
- * Analyze historical data to identify patterns in power growth
+ * Genera un piano di aggiornamento per raggiungere un livello target
  */
-function analyzePowerGrowth(character: CharacterData): {
-  levelPowerFactor: number;
-  attributeToPowerRatio: number;
-  observations: string[];
-} {
-  const observations: string[] = [];
-  
-  if (character.points.length < 2) {
-    return {
-      levelPowerFactor: BASE_POWER_FACTOR,
-      attributeToPowerRatio: 0.5,
-      observations: ["Not enough data points to analyze power growth"]
-    };
-  }
-  
-  // Calculate power increase per level
-  const powerPerLevel: number[] = [];
-  for (let i = 1; i < character.points.length; i++) {
-    const currentPoint = character.points[i];
-    const prevPoint = character.points[i-1];
-    
-    const powerIncrease = currentPoint.power - prevPoint.power;
-    const levelIncrease = currentPoint.level - prevPoint.level;
-    
-    if (levelIncrease > 0) {
-      powerPerLevel.push(powerIncrease / levelIncrease);
-    }
-  }
-  
-  // Calculate average power increase per level
-  const avgPowerPerLevel = powerPerLevel.reduce((sum, val) => sum + val, 0) / powerPerLevel.length;
-  observations.push(`Average power increase per level: ${avgPowerPerLevel.toFixed(2)}`);
-  
-  // Calculate attribute to power ratio
-  const attrToPowerRatios: number[] = [];
-  for (let i = 0; i < character.points.length; i++) {
-    const point = character.points[i];
-    attrToPowerRatios.push(point.power / point.totalAttributes);
-  }
-  
-  const avgAttrToPowerRatio = attrToPowerRatios.reduce((sum, val) => sum + val, 0) / attrToPowerRatios.length;
-  observations.push(`Average power-to-attribute ratio: ${avgAttrToPowerRatio.toFixed(2)}`);
-  
-  return {
-    levelPowerFactor: avgPowerPerLevel,
-    attributeToPowerRatio: avgAttrToPowerRatio,
-    observations
-  };
-}
-
-/**
- * Generate an upgrade plan to reach a target level
- */
-function generateUpgradePlan(
+export function generateUpgradePlan(
   character: CharacterData,
   currentLevel: number,
   targetLevel: number
@@ -399,29 +369,29 @@ function generateUpgradePlan(
   projectedStats: ProjectedStats[];
   recommendations: string[];
 } {
-  // Find current and target stats
+  // Trova le statistiche attuali e target
   const currentPoint = character.points.find(p => p.level === currentLevel);
   if (!currentPoint) {
-    throw new Error(`Data for current level ${currentLevel} not found`);
+    throw new Error(`Dati per il livello attuale ${currentLevel} non trovati`);
   }
 
-  // Calculate upgrade costs
+  // Calcola i costi di aggiornamento
   const upgradeCosts = calculateUpgradeCosts(currentLevel, targetLevel, character);
   
-  // Generate projections
+  // Genera proiezioni
   const projectedStats = projectCharacterStats(character, targetLevel);
   
-  // The target stats are either from actual data or projected
+  // Le statistiche target sono tratte dai dati effettivi o dalle proiezioni
   const targetPointData = character.points.find(p => p.level === targetLevel);
   const targetPoint = targetPointData || projectedStats[projectedStats.length - 1];
   
-  // Generate recommendations
+  // Genera consigli
   const recommendations: string[] = [];
   
-  // Recommend which attribute to focus on
+  // Consiglia su quale attributo concentrarsi
   const proficientAttributes = character.proficiency.map(p => p.toLowerCase());
   
-  // Handle the attribute calculation based on whether we're using actual data or projection
+  // Gestisci il calcolo degli attributi in base all'utilizzo di dati effettivi o di proiezione
   const targetAttributes = targetPointData ? targetPointData.baseAttributes : (projectedStats[projectedStats.length - 1].attributes);
   
   const attributeGains: {name: string; projected: number}[] = [
@@ -431,25 +401,25 @@ function generateUpgradePlan(
     {name: "charisma", projected: targetAttributes.charisma - currentPoint.baseAttributes.charisma}
   ];
   
-  // Sort attributes by projected gain and proficiency
+  // Ordina gli attributi per guadagno proiettato e proficienza
   attributeGains.sort((a, b) => {
-    // First prioritize proficient attributes
+    // Prima dai priorità agli attributi proficienti
     const aProficient = proficientAttributes.includes(a.name);
     const bProficient = proficientAttributes.includes(b.name);
     
     if (aProficient && !bProficient) return -1;
     if (!aProficient && bProficient) return 1;
     
-    // Then sort by projected gain
+    // Poi ordina per guadagno proiettato
     return b.projected - a.projected;
   });
   
-  recommendations.push(`Focus on ${attributeGains[0].name} for best power gains (projected +${attributeGains[0].projected} points)`);
+  recommendations.push(`Concentrati su ${attributeGains[0].name} per i migliori incrementi di potenza (previsto +${attributeGains[0].projected} punti)`);
   
-  // Recommend talent upgrades
+  // Consiglia aggiornamenti dei talenti
   const talentsByPriority = upgradeCosts.talentUpgrades
     .sort((a, b) => {
-      // Prioritize by star rating, then by attribute proficiency
+      // Dai priorità in base alle stelle, poi alla proficienza dell'attributo
       if (a.stars !== b.stars) return b.stars - a.stars;
       
       const aTypeProficient = proficientAttributes.includes(a.type.toLowerCase());
@@ -458,13 +428,15 @@ function generateUpgradePlan(
       if (aTypeProficient && !bTypeProficient) return -1;
       if (!aTypeProficient && bTypeProficient) return 1;
       
-      return a.cost - b.cost; // If all else equal, prioritize lower cost
+      return a.cost - b.cost; // Se tutto è uguale, dai priorità al costo inferiore
     });
   
-  recommendations.push(`Prioritize upgrading ${talentsByPriority[0].name} talent (${talentsByPriority[0].stars}★)`);
+  if (talentsByPriority.length > 0) {
+    recommendations.push(`Dai priorità all'aggiornamento del talento ${talentsByPriority[0].name} (${talentsByPriority[0].stars}★)`);
+  }
   
-  // Report total resources needed
-  recommendations.push(`Total resources needed: ${upgradeCosts.totalSilver} silver, ${upgradeCosts.totalExp} talent exp, ${upgradeCosts.totalAbilityPoints} ability points`);
+  // Riporta le risorse totali necessarie
+  recommendations.push(`Risorse totali necessarie: ${upgradeCosts.totalSilver} argento, ${upgradeCosts.totalExp} exp talento, ${upgradeCosts.totalAbilityPoints} punti abilità`);
   
   return {
     currentStats: {
@@ -482,43 +454,3 @@ function generateUpgradePlan(
     recommendations
   };
 }
-
-/**
- * Calculate total attributes for a character data point
- * Total Attributes = Sum of all base attributes + book bonus + lover bonus
- */
-function calculateTotalAttributes(point: CharacterPoint): number {
-  // Sum base attributes
-  const baseTotal = 
-    point.baseAttributes.strength +
-    point.baseAttributes.intelligence +
-    point.baseAttributes.command +
-    point.baseAttributes.charisma;
-  
-  // Sum book bonus attributes
-  const bookTotal = 
-    point.bookBonus.strength +
-    point.bookBonus.intelligence +
-    point.bookBonus.command +
-    point.bookBonus.charisma;
-  
-  // Sum lover bonus attributes
-  const loverTotal = 
-    point.loverBonus.strength +
-    point.loverBonus.intelligence +
-    point.loverBonus.command +
-    point.loverBonus.charisma;
-  
-  // Return the sum of all attributes
-  return baseTotal + bookTotal + loverTotal;
-}
-
-// Export functions for use in other modules
-export {
-  calculateUpgradeCosts,
-  calculatePower,
-  projectCharacterStats,
-  analyzePowerGrowth,
-  generateUpgradePlan,
-  calculateTotalAttributes
-};

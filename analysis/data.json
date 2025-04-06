@@ -4,6 +4,12 @@
       "name": "Greg",
       "stars": 3,
       "proficiency": ["strength", "intelligence", "command", "charisma"],
+      "initialAttributes": {
+        "strength": 40,
+        "intelligence": 40,
+        "command": 40,
+        "charisma": 40
+      },
       "points": [
         {
           "level": 1,
@@ -323,6 +329,12 @@
       "name": "Talbot",
       "stars": 2,
       "proficiency": ["strength"],
+      "initialAttributes": {
+        "strength": 60,
+        "intelligence": 10,
+        "command": 10,
+        "charisma": 20
+      },
       "points": [
         {
           "level": 1,
